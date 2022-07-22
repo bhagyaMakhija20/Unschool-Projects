@@ -1,225 +1,377 @@
-#ifdef _WIN32                //for clear func
-#include <Windows.h>
-#else
-#include <unistd.h>
-#endif
-
+#define MSDOS
 #include <iostream>
-#include <cstdlib>           //for clr func
+#include<stdio.h>
+#include<string.h>
+#include<stdlib.h>
+#include<windows.h>
+#define MAX_NO 91
+#ifdef MSDOS
+#include<conio.h>
+#endif // MSDOS
 
-#include "time.h"            //for srand func
-
-
-using namespace std;
-
-
-class Person
-{
-    private:
-        string name;
-        float depositAmount;
-        float remAmount;
-
-    public:
-        Person()
-        {
-            cout << "\t\t\tEnter your name please: ";
-            cin >> name;
-            cout << "\t\t\tEnter the amount you want to deposit: Rs.";
-            cin >> depositAmount;
-            remAmount = depositAmount;
-
-        }
-
-        string getName()
-        {
-            //cout << "\t\t\tYou are " << name << endl;
-            return name;
-        }
-
-        float getDepositedAmount()
-        {
-            return depositAmount;
-            //cout << "\t\t\tDeposited Amount: Rs." << depositAmount << endl ;
-        }
-
-        float getRemainingAmount()
-        {
-            return remAmount;
-            //cout << "\t\t\tRemaining Amount: Rs." << remAmount << endl;
-        }
-
-        void setName(string n)
-        {
-            name = n;
-        }
-
-        void setDepositedAmount(float amt)
-        {
-            depositAmount = amt;
-        }
-
-        void setRemAmount(float amt)
-        {
-            remAmount = amt;
-        }
-
-};
-
-class Play
-{
-
-    private:
-        int compNo;
-        int betterNo;
-        float betAmt;
-
-
-    public:
-
-        void playGame(Person p)
-        {
-            bool flag = true;
-            char choice;
-            while(flag)
-            {
-
-                rulesOfGame();
-
-                if(p.getRemainingAmount() >= 100)     //if amt is greater then min bet limit
-                {
-                    cout << p.getName() << ", your current balance is Rs."  << p.getRemainingAmount() << endl;
-                    cout << "\n" << p.getName() << ", please enter your betting amount: Rs. ";
-                    cin >> betAmt;
-
-                    if(betAmt < 100 || betAmt > p.getRemainingAmount()){
-
-                        while(betAmt < 100){
-                            cout << "\nMinimum betting amount is 100, please re-enter the betting amount: ";
-                            cin >> betAmt;
-                        }
-
-                        while(betAmt > p.getRemainingAmount()){
-                            cout << "\nBetting amount is greater than the amount you currently have, please re-enter the betting amount: ";
-                            cin >> betAmt;
-                        }
-
-                    }
-
-                    cout << "\nNow please guess your number to bet, between 1 and 10 :";
-                    cin >> betterNo;
-
-                    if(winOrLoose()){       //true, means won
-
-                        betAmt = betAmt * 10;
-                        p.setRemAmount( (p.getRemainingAmount() + betAmt) );
-                        cout << "Your bet Number: " << betterNo << endl;
-                        cout << "Winning Number: " << compNo << endl;
-                        cout << "\nYou won, " << betAmt << "! Now remaining Amount is: " << p.getRemainingAmount() << endl;
-                        betAmt = 0;
-
-                    }
-                    else{                   //false, means lost
-
-                        p.setRemAmount( (p.getRemainingAmount() - betAmt) );
-                        cout << "Your bet Number: " << betterNo << endl;
-                        cout << "Winning Number: " << compNo << endl;
-                        cout << "You Lost, " << betAmt << "! Now remaining Amount is: " << p.getRemainingAmount() << endl;
-                        betAmt = 0;
-
-                    }
-
-                    cout << "\nDo you want to play again? y/n : ";
-                    cin >> choice;
-
-                    if(choice == 'y')
-                    {
-                        flag = true;
-                        Sleep(1000);
-                        system("cls");
-                    }
-                    else{
-
-                        p.setDepositedAmount(p.getRemainingAmount());        //updating deposited amount to remaining amount
-                        system("cls");
-                        flag = false;
-                        break;
-
-                    }
-
-                }
-
-                else{
-                    cout << "Sorry, " << p.getName() << ", remaining amount is less than betting limit of Rs.100. You can't play this time!\n";
-
-                    p.setDepositedAmount(p.getRemainingAmount());        //updating deposited amount to remaining amount
-                    flag = false;
-                    Sleep(2700);
-                    system("cls");
-                    break;
-                }
-
-            }
-
-            cout << "\t\t\t--------------------------------------------------------------------------\n";
-            cout << "\n\t\t\t\t\t\t\tCASINO GAME \n\n";
-            cout << "\t\t\t--------------------------------------------------------------------------\n";
-            cout << "\n\t\t\t\tThank you, " << p.getName() << " for playing CASINO GAME !" << endl;
-            cout << "\n\t\t\t\tYour Amount: Rs. " << p.getDepositedAmount() << "\n\n";
-
-
-        }
-
-
-
-        void rulesOfGame()
-        {
-            cout << "\t\t\t--------------------------------------------------------------------------\n";
-            cout << "\n\t\t\t\t\t\t\tRules Of The Game \n\n";
-            cout << "\t\t\t--------------------------------------------------------------------------\n";
-            cout << "\n\t\t\t\t1. Choose any number between 1 to 10.";
-            cout << "\n\t\t\t\t2. If you win you will get 10 times of money of your bet.";
-            cout << "\n\t\t\t\t3. If you lost, you will loose your betting amount.\n\n";
-            cout << "\t\t\t--------------------------------------------------------------------------\n";
-
-        }
-
-        bool winOrLoose()
-        {
-            srand(time(0));
-            compNo = (rand()%(10 - 1 + 1)) + 1;       // (rand()%(U - L + 1)) + L
-
-            if(betterNo == compNo){
-                return true;
-            }
-            else{
-                return false;
-            }
-        }
-};
-
+//Function prototype
+int LeapYear(int Year);
+int getZeller(int Month,int Year);
+void printchar(char CH);
+void textbackground(int color);
+int getKey();
+void SetColor(int value);
 
 int main()
 {
-    cout << "\t\t\t--------------------------------------------------------------------------\n";
-    cout << "\n\t\t\t\t\t\t\tCASINO GAME \n\n";
-    cout << "\t\t\t--------------------------------------------------------------------------\n";
+    char char1='-';
+    system("Color E4");
+    printf("\n\t\t\tThis is a calendar application!");
 
-    Person p1;
-    //p1.getName();
-    //p1.getDepositedAmount();
-    //p1.getRemainingAmount();
+    int Year=0,Month=0;
+    char control;
 
-    Play play;
+    char Value[7];
+    char cyear[]="YEAR";
+    char cmonth[]="MONTH";
 
-    Sleep(2000);                         //to pause from clearing the screen,and moving on for few seconds
+ while(true){
+        printf("\n\nEnter YEAR or MONTH to view Calendar!\n");
+        scanf("\n%s",&Value);
+
+        //nested if else for printing year or month calender
+//**********************************************************************************************************
+    if((strcmp(Value,cyear))==0){
+
+
+//******************************************printing calendar of complete year
+         while(true){
+        //Loop continues until a valid value is input and
+        //it reaches break statement
+
+        system("cls");
+        SetColor(225);
+        printf("\n\t\t\tEnter year:");
+        scanf("%d",&Year);
+        if(Year<0){
+            printf("\nInvalid Year value");
+            continue;
+        }
+        if(Year<1500||Year>4500){
+            printf("Invalid Year Value");
+            continue;
+        }
+        break;
+    }
+
+
+do{
+     printf("\n\n\t\tYEAR-%d",Year);
+
     system("cls");
+    system("Color 3F");
+    for(int month=1;month<=12;month++){
 
-    play.playGame(p1);
+       int MonthDay[12]={31,28,31,30,31,30,31,31,30,31,30,31};
+    char *MonthName[]={"January","February","March","April","May","June","July","August","September",
+    "October","November","December"};
+    char *MonthNameShort[]={"JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"};
+
+      int Zeller=getZeller(month,Year);  //Function call
+
+    printf("\n\n\t\t\t");
+
+    SetColor(241);
+    printf("  %s %d  ",MonthName[month-1],Year);
+
+    SetColor(63);
+    printf("\n");
+    if(LeapYear(Year)==0){
+        MonthDay[1]=29;
+    }
+    else{
+        MonthDay[1]=28;
+    }
+    printchar(char1);
+    printf("\t");
+    SetColor(52);
+    printf("SUN");
+    SetColor(63);
+    printf("    MON    TUE    WED    THU    FRI    SAT");
+
+    printchar(char1);
+
+    int j;
+    for(int i=1;i<=Zeller;i++)
+        printf("\t-");
+        j=Zeller;
+
+        for(int i=1;i<=MonthDay[month-1];i++){
+            if(j++%7==0){
+
+                printf("\n\t");
+                printf("%2d",i);
+
+            }
+            else{
+                printf("     %2d",i);
+            }
+        }
+
+        printchar(char1);
+
+    }
+        printf("\n\n\t\t(*) Use Left,Right,Up,Down,Enter,Esc keys");
+        control=getch();
+
+ bool Proceed=false;
+#ifdef MSDOS
+    Proceed=_kbhit();
+#else
+    Proceed=true;
+#endif // MSDOS
+
+    if(Proceed){
+#ifdef MSDOS
+        control=_getch();
+#else
+        cin.get(control);
+        cin.get();
+#endif
+
+        switch(control){
+
+        case -32:
+            continue;
+            break;
+        case 'p':
+        case 'P':
+        case 72:
+        case 75:
+           Year -=1;
+          break;
+
+        case 'n':
+        case 'N':
+        case 13:
+        case 77:
+            Year +=1;
+            break;
+
+        default:
+            printf("Wrong Input!");
+            continue;
+            break;
+
+        };
+    }
+}while(control!=27);
+        break;
+
+    }
+
+//**********************************************************************************************************
+    else if((strcmp(Value,cmonth))==0){
+
+//***********************************************printing calendar of specific month
+
+   while(true){
+        //Loop continues until a valid value is input and
+        //it reaches break statement
+
+        printf("\n\tEnter month and year in mm-yyyy format.");
+        scanf("%d-%d",&Month,&Year);
+        if(Year<0){
+            printf("\nInvalid Year value");
+            continue;
+        }
+        if(Year<1500||Year>4500){
+            printf("Invalid Year Value");
+            continue;
+        }
+        if(Month<1||Month>12){
+            printf("\nInvalid Month Value");
+            continue;
+        }
+        break;
+    }
 
 
+  do{
 
+    int MonthDay[]={31,28,31,30,31,30,31,31,30,31,30,31};
+    char *MonthName[]={"January","February","March","April","May","June","July","August","September",
+    "October","November","December"};
+    char *MonthNameShort[]={"JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"};
 
+     system("Color 3F");
+     int Zeller=getZeller(Month,Year);  //Function call
+    system("cls");
+    printf("\n\n\t\t\t");
+
+    SetColor(241);
+    printf("  %s %d  ",MonthName[Month-1],Year);
+
+    SetColor(63);
+    printf("\n");
+    if(LeapYear(Year)==0){
+        MonthDay[1]=29;
+    }
+    else{
+        MonthDay[1]=28;
+    }
+    printchar(char1);
+    printf("\t");
+    SetColor(52);
+    printf("SUN");
+    SetColor(63);
+    printf("    MON    TUE    WED    THU    FRI    SAT");
+
+    printchar(char1);
+
+    int j;
+    for(int i=1;i<=Zeller;i++)
+        printf("\t-");
+        j=Zeller;
+
+        for(int i=1;i<=MonthDay[Month-1];i++){
+            if(j++%7==0){
+
+                printf("\n\t");
+                printf("%2d",i);
+
+            }
+            else{
+                printf("     %2d",i);
+            }
+        }
+
+        printchar(char1);
+
+        printf("\n\n\t\t(*) Use Left,Right,Up,Down,Enter arrow keys");
+        control=getch();
+
+         bool Proceed=false;
+#ifdef MSDOS
+    Proceed=_kbhit();
+#else
+    Proceed=true;
+#endif // MSDOS
+
+    if(Proceed){
+#ifdef MSDOS
+        control=_getch();
+#else
+        cin.get(control);
+        cin.get();
+#endif
+        switch(control){
+
+        case -32:
+            continue;
+            break;
+        case 'p':
+        case 'P':
+        case 72:
+        case 75:
+            Month--;
+            if(Month<1)
+            {
+                Month+=12;
+                Year -=1;
+            }
+          break;
+        case 'n':
+        case 'N':
+        case 13:
+        case 77:
+            Month++;
+            if(Month>12){
+                Month -=12;
+                Year +=1;
+            }
+            break;
+        default:
+            printf("Wrong Input!");
+            continue;
+            break;
+
+        };
+    }
+  }while(control!=27);
+
+        break;
+    }
+//**********************************************************************************************************
+
+//***********************if value entered is wrong
+    else{
+        printf("Invalid value");
+        continue;
+    }
+
+ }
 
     return 0;
+
 }
+
+//**********************************************************************************************************
+//Leap year testing function
+
+int LeapYear(int Year){    //Function Declaration
+  if(Year<0){
+    return -1;
+  }
+  else if(Year%4==0){
+    if(Year%100==0){
+        if(Year%400==0){
+            return 0;
+        }
+        else{
+            return -1;
+        }
+    }
+    else{
+        return 0;
+    }
+  }
+  else{
+    return -1;
+  }
+}
+
+
+//Zellers algorithm function
+
+int getZeller(int Month,int Year){
+   int Day=1,ZMonth,ZYear,Zeller;
+   if(Month<3){
+    ZMonth=Month+10;
+   }
+   else{
+    ZMonth=Month-2;
+   }
+   if(ZMonth>10){
+    ZYear=Year-1;
+   }
+   else{
+    ZYear=Year;
+   }
+
+   Zeller=((int)((13*ZMonth-1)/5)+Day+ZYear%100+(int)((ZYear%100)/4)-
+           2*(int)(ZYear%100)+(int)(ZYear/400)+77)%7;
+           return Zeller;
+}
+
+//printchar function for boundary
+
+void printchar(char c){
+int i;
+printf("\n\t");
+for(i=1;i<=50;i++)
+    printf("%c",c);
+printf("\n");
+}
+
+//colouredtext
+void SetColor(int value){
+    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),  value);
+}
+
+
