@@ -1,0 +1,225 @@
+#ifdef _WIN32                //for clear func
+#include <Windows.h>
+#else
+#include <unistd.h>
+#endif
+
+#include <iostream>
+#include <cstdlib>           //for clr func
+
+#include "time.h"            //for srand func
+
+
+using namespace std;
+
+
+class Person
+{
+    private:
+        string name;
+        float depositAmount;
+        float remAmount;
+
+    public:
+        Person()
+        {
+            cout << "\t\t\tEnter your name please: ";
+            cin >> name;
+            cout << "\t\t\tEnter the amount you want to deposit: Rs.";
+            cin >> depositAmount;
+            remAmount = depositAmount;
+
+        }
+
+        string getName()
+        {
+            //cout << "\t\t\tYou are " << name << endl;
+            return name;
+        }
+
+        float getDepositedAmount()
+        {
+            return depositAmount;
+            //cout << "\t\t\tDeposited Amount: Rs." << depositAmount << endl ;
+        }
+
+        float getRemainingAmount()
+        {
+            return remAmount;
+            //cout << "\t\t\tRemaining Amount: Rs." << remAmount << endl;
+        }
+
+        void setName(string n)
+        {
+            name = n;
+        }
+
+        void setDepositedAmount(float amt)
+        {
+            depositAmount = amt;
+        }
+
+        void setRemAmount(float amt)
+        {
+            remAmount = amt;
+        }
+
+};
+
+class Play
+{
+
+    private:
+        int compNo;
+        int betterNo;
+        float betAmt;
+
+
+    public:
+
+        void playGame(Person p)
+        {
+            bool flag = true;
+            char choice;
+            while(flag)
+            {
+
+                rulesOfGame();
+
+                if(p.getRemainingAmount() >= 100)     //if amt is greater then min bet limit
+                {
+                    cout << p.getName() << ", your current balance is Rs."  << p.getRemainingAmount() << endl;
+                    cout << "\n" << p.getName() << ", please enter your betting amount: Rs. ";
+                    cin >> betAmt;
+
+                    if(betAmt < 100 || betAmt > p.getRemainingAmount()){
+
+                        while(betAmt < 100){
+                            cout << "\nMinimum betting amount is 100, please re-enter the betting amount: ";
+                            cin >> betAmt;
+                        }
+
+                        while(betAmt > p.getRemainingAmount()){
+                            cout << "\nBetting amount is greater than the amount you currently have, please re-enter the betting amount: ";
+                            cin >> betAmt;
+                        }
+
+                    }
+
+                    cout << "\nNow please guess your number to bet, between 1 and 10 :";
+                    cin >> betterNo;
+
+                    if(winOrLoose()){       //true, means won
+
+                        betAmt = betAmt * 10;
+                        p.setRemAmount( (p.getRemainingAmount() + betAmt) );
+                        cout << "Your bet Number: " << betterNo << endl;
+                        cout << "Winning Number: " << compNo << endl;
+                        cout << "\nYou won, " << betAmt << "! Now remaining Amount is: " << p.getRemainingAmount() << endl;
+                        betAmt = 0;
+
+                    }
+                    else{                   //false, means lost
+
+                        p.setRemAmount( (p.getRemainingAmount() - betAmt) );
+                        cout << "Your bet Number: " << betterNo << endl;
+                        cout << "Winning Number: " << compNo << endl;
+                        cout << "You Lost, " << betAmt << "! Now remaining Amount is: " << p.getRemainingAmount() << endl;
+                        betAmt = 0;
+
+                    }
+
+                    cout << "\nDo you want to play again? y/n : ";
+                    cin >> choice;
+
+                    if(choice == 'y')
+                    {
+                        flag = true;
+                        Sleep(1000);
+                        system("cls");
+                    }
+                    else{
+
+                        p.setDepositedAmount(p.getRemainingAmount());        //updating deposited amount to remaining amount
+                        system("cls");
+                        flag = false;
+                        break;
+
+                    }
+
+                }
+
+                else{
+                    cout << "Sorry, " << p.getName() << ", remaining amount is less than betting limit of Rs.100. You can't play this time!\n";
+
+                    p.setDepositedAmount(p.getRemainingAmount());        //updating deposited amount to remaining amount
+                    flag = false;
+                    Sleep(2700);
+                    system("cls");
+                    break;
+                }
+
+            }
+
+            cout << "\t\t\t--------------------------------------------------------------------------\n";
+            cout << "\n\t\t\t\t\t\t\tCASINO GAME \n\n";
+            cout << "\t\t\t--------------------------------------------------------------------------\n";
+            cout << "\n\t\t\t\tThank you, " << p.getName() << " for playing CASINO GAME !" << endl;
+            cout << "\n\t\t\t\tYour Amount: Rs. " << p.getDepositedAmount() << "\n\n";
+
+
+        }
+
+
+
+        void rulesOfGame()
+        {
+            cout << "\t\t\t--------------------------------------------------------------------------\n";
+            cout << "\n\t\t\t\t\t\t\tRules Of The Game \n\n";
+            cout << "\t\t\t--------------------------------------------------------------------------\n";
+            cout << "\n\t\t\t\t1. Choose any number between 1 to 10.";
+            cout << "\n\t\t\t\t2. If you win you will get 10 times of money of your bet.";
+            cout << "\n\t\t\t\t3. If you lost, you will loose your betting amount.\n\n";
+            cout << "\t\t\t--------------------------------------------------------------------------\n";
+
+        }
+
+        bool winOrLoose()
+        {
+            srand(time(0));
+            compNo = (rand()%(10 - 1 + 1)) + 1;       // (rand()%(U - L + 1)) + L
+
+            if(betterNo == compNo){
+                return true;
+            }
+            else{
+                return false;
+            }
+        }
+};
+
+
+int main()
+{
+    cout << "\t\t\t--------------------------------------------------------------------------\n";
+    cout << "\n\t\t\t\t\t\t\tCASINO GAME \n\n";
+    cout << "\t\t\t--------------------------------------------------------------------------\n";
+
+    Person p1;
+    //p1.getName();
+    //p1.getDepositedAmount();
+    //p1.getRemainingAmount();
+
+    Play play;
+
+    Sleep(2000);                         //to pause from clearing the screen,and moving on for few seconds
+    system("cls");
+
+    play.playGame(p1);
+
+
+
+
+
+    return 0;
+}
